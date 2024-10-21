@@ -41,7 +41,7 @@ namespace CoreDemo.Controllers
                 //Sayfada buton tetiklenince çalışır
                 p.WriterStatus = true;
                 p.WriterAbout = "Yazar hakkında...";
-                wm.WriterAdd(p);
+                wm.TAdd(p);
                 return RedirectToAction("Index", "Blog");
             } 
 			else
