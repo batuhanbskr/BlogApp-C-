@@ -1,0 +1,91 @@
+﻿@model EntityLayer.Concrete.Writer
+@{
+    ViewData["Title"] = "WriterEditProfile";
+    Layout = "~/Views/Shared/WriterLayout.cshtml";
+}
+
+@using (Html.BeginForm("WriterEditProfile", "Writer", FormMethod.Post))
+{
+    <div class="col-12 grid-margin stretch-card">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">Yazar Progfil Bilgileri Düzenleme</h4>
+                <br />
+                @Html.HiddenFor(x=>x.WriterID, new {@class = "form-control"})
+                <form class="forms-sample">
+                    <div class="form-group">
+                        <label for="exampleInputName1">Yazar Ad Soyad</label>
+                        @Html.TextAreaFor(x=>x.WriterName, new {@class = "form-control"})
+                    </div>
+                    <div class="form-group">
+                        <label for="exampleInputEmail3">Email address</label>
+                        @Html.TextAreaFor(x=>x.WriterMail, new {@class = "form-control"})
+                    </div>
+                    <div class="form-group">
+                        <label for="exampleInputPassword4">Password</label>
+                        @Html.PasswordFor(x=>x.WriterPassword, new {@class = "form-control", id = "password"})
+                    </div>
+                    <div class="form-group">
+                        <label for="exampleInputPassword4">Password Yeniden</label>
+                        @Html.PasswordFor(x=>x.WriterPassword, new {@class = "form-control", id = "confirmPassword"})
+                    </div>
+                    <label id="passwordError" style="color:red; display:none;">Parolalar eşleşmiyor!</label>
+                    <div class="form-group">
+                        <label>Yazar Göresl</label>
+                        <input type="file" name="img[]" class="file-upload-default">
+                        <div class="input-group col-xs-12">
+                            <input type="text" class="form-control file-upload-info" disabled placeholder="Upload Image">
+                            <span class="input-group-append">
+                                <button class="file-upload-browse btn btn-gradient-primary" type="button">Resim Seç</button>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="exampleTextarea1">Yazar Hakkında</label>
+                        @Html.TextAreaFor(x=>x.WriterAbout, 10, 3, new {@class = "form-control"})
+                    </div>
+                    <button type="submit" class="btn btn-gradient-primary mr-2">Güncelle</button>
+                    <button class="btn btn-light">İptal</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            // Formun gönderilmesini engellemek için form submit event'ini yakalıyoruz.
+            $('form').on('submit', function (e) {
+                var password = $('#password').val();
+                var confirmPassword = $('#confirmPassword').val();
+
+                // Eğer parola tekrar alanı boş ise uyarı ver ve formun gönderilmesini engelle
+                if (confirmPassword === "") {
+                    $('#passwordError').text("Parola tekrar alanı boş olamaz").show();
+                    e.preventDefault(); // Formun gönderilmesini engelle
+                }
+                // Eğer parolalar eşleşmiyorsa formun gönderilmesini engelle
+                else if (password !== confirmPassword) {
+                    $('#passwordError').text("Parolalar eşleşmiyor!").show();
+                    e.preventDefault(); // Formun gönderilmesini engelle
+                } else {
+                    $('#passwordError').hide(); // Hata yoksa mesajı gizle
+                }
+            });
+
+            // Kullanıcı parola tekrar alanına her veri girişi yaptığında kontrol yapıyoruz
+            $('#confirmPassword').on('input', function () {
+                var password = $('#password').val();
+                var confirmPassword = $(this).val();
+
+                // Parolalar eşleşmediğinde uyarıyı göster
+                if (password !== confirmPassword) {
+                    $('#passwordError').text("Parolalar eşleşmiyor!").show();
+                } else {
+                    $('#passwordError').hide(); // Parolalar eşleşiyorsa uyarıyı gizle
+                }
+            });
+        });
+    </script>
+
+}
