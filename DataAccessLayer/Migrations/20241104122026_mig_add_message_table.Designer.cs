@@ -198,7 +198,7 @@ namespace DataAccessLayer.Migrations
                     b.ToTable("Contacts");
                 });
 
-            modelBuilder.Entity("EntityLayer.Concrete.Message", b =>
+            modelBuilder.Entity("EntityLayer.Concrete.Message2", b =>
                 {
                     b.Property<int>("MessageID")
                         .ValueGeneratedOnAdd()

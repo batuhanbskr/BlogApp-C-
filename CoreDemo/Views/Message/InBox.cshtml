@@ -1,0 +1,83 @@
+﻿@using EntityLayer.Concrete
+@model List<Message2>
+@{
+    ViewData["Title"] = "InBox";
+    Layout = "~/Views/Shared/WriterLayout.cshtml";
+}
+
+<h1>Gelen Kutusu</h1>
+<table class="table table-bordered">
+    <tr>
+        <th>#</th>
+        <th>Konu</th>
+        <th>Gönderen</th>
+        <th>Tarih</th>
+        <th>Mesajı Aç</th>
+    </tr>
+    @foreach (var item in Model)
+    {
+        <tr>
+            <th>@item.MessageID</th>
+            <td>@item.Subject</td>
+            <td>@item.SenderUser.WriterName</td>
+            <td>@(((DateTime)item.MessageDate).ToString("dd-MMM-yyyyy"))</td>
+            <td><a href="/Message/MessageDetails/@item.MessageID" class="btn btn-warning">Mesajı Aç</a></td>
+        </tr>
+    }
+</table>
+<a href="/Blog/BlogAdd/" class="btn btn-info">Yeni Blog Oluştur</a>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $('.deleteBlog').on('click', function (e) { // class kullanılıyor
+            e.preventDefault();
+            var url = $(this).attr('href');
+            swal({
+                title: 'Bloğu silmek istediğinizden emin misiniz?',
+                text: "Bu işlem geri alınamaz!",
+                icon: 'warning',
+                buttons: {
+                    cancel: {
+                        text: "Vazgeç",
+                        visible: true,
+                        className: "btn btn-default"
+                    },
+                    confirm: {
+                        text: "Evet, sil!",
+                        className: "btn btn-danger"
+                    }
+                },
+                dangerMode: true,
+                customClass: {
+                    popup: 'swal-centered' // Butonları ortalamak için özel sınıf ekliyoruz
+                }
+            }).then((willDelete) => {
+                if (willDelete) {
+                    $.ajax({
+                        type: 'POST',
+                        url: url,
+                        success: function (response) {
+                            swal({
+                                icon: "success",
+                                button: false,
+                                text: "Blog başarıyla silindi!"
+                            }).then(() => {
+                                location.reload(); // Sayfayı yeniden yükleyebilirsin
+                            });
+                        },
+                        error: function () {
+                            swal({
+                                icon: "error",
+                                button: false,
+                                text: "Blog Silme İşlemi Başarısız Oldu"
+                            });
+                        }
+                    });
+                }
+            });
+        });
+    });
+</script>
+
+

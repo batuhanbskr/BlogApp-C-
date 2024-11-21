@@ -12,17 +12,17 @@ using System.Linq;
 
 namespace CoreDemo.Controllers
 {
-    [AllowAnonymous]
     public class BlogController : Controller
     {
         CategoryManager cm = new CategoryManager(new EfCategoryRepository());
         BlogManager bm = new BlogManager(new EfBlogRepository());
+        WriterManager wm = new WriterManager(new EfWriterRepository());
         public IActionResult Index()
         {
             var values = bm.GetBlogListWithCategory();
             return View(values);
         }
-        public IActionResult BlogReadAll(int id) 
+        public IActionResult BlogReadAll(int id)
         {
             ViewBag.i = id;
             var values = bm.GetBlogByID(id);
@@ -30,17 +30,22 @@ namespace CoreDemo.Controllers
         }
         public IActionResult BlogListByWriter()
         {
-            var values = bm.GetListWithCategoryByWriterBm(1);
+            var usermail = User.Identity.Name;
+
+            var writerId = wm.GetWriterIdByMail(usermail);
+
+            var values = bm.GetListWithCategoryByWriterBm(writerId);
             return View(values);
         }
         [HttpGet]
         public IActionResult BlogAdd()
         {
-            List<SelectListItem> categoryvalues = (from x in cm.GetList() select new SelectListItem
-            {
-                Text = x.CategoryName,
-                Value = x.CategoryID.ToString()
-            }).ToList();
+            List<SelectListItem> categoryvalues = (from x in cm.GetList()
+                                                   select new SelectListItem
+                                                   {
+                                                       Text = x.CategoryName,
+                                                       Value = x.CategoryID.ToString()
+                                                   }).ToList();
             ViewBag.cv = categoryvalues;
             return View();
         }
@@ -55,7 +60,11 @@ namespace CoreDemo.Controllers
                 //Sayfada buton tetiklenince çalışır
                 p.BlogStatus = true;
                 p.BlogCreateDate = DateTime.Parse(DateTime.Now.ToShortDateString());
-                p.WriterID = 1;
+
+                var usermail = User.Identity.Name;
+                var writerId = wm.GetWriterIdByMail(usermail);
+                p.WriterID = writerId;
+
                 bm.TAdd(p);
                 return RedirectToAction("BlogListByWriter", "Blog");
             }
@@ -90,7 +99,10 @@ namespace CoreDemo.Controllers
         [HttpPost]
         public IActionResult EditBlog(Blog p)
         {
-            p.WriterID = 1;
+            var usermail = User.Identity.Name;
+            var writerId = wm.GetWriterIdByMail(usermail);
+            p.WriterID = writerId;
+
             //p.BlogCreateDate = 
             p.BlogCreateDate = bm.TGetById(1).BlogCreateDate;
             p.BlogStatus = true;

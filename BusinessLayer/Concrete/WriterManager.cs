@@ -28,6 +28,11 @@ namespace BusinessLayer.Concrete
             return _writerdal.GetListAll(x=> x.WriterID == id);
         }
 
+        public int GetWriterIdByMail(string mail)
+        {
+            return _writerdal.GetListAll(x=> x.WriterMail == mail).Select(y => y.WriterID).FirstOrDefault();
+        }
+
         public void TAdd(Writer t)
         {
             _writerdal.Insert(t);
