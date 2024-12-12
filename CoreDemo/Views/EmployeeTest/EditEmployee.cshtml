@@ -1,0 +1,17 @@
+﻿@model CoreDemo.Controllers.Class1
+
+@{
+    ViewData["Title"] = "EditEmployee";
+    Layout = "~/Views/Shared/AdminLayout.cshtml";
+}
+
+<form method="post">
+    <label>ID</label>
+    @Html.TextBoxFor(x => x.ID, new {@class = "form-control"})
+    <br />
+    <label>Çalışan Adı Soyadı</label>
+    @Html.TextBoxFor(x=> x.Name, new { @class = "form-control"})
+    <br />
+    <button class="btn btn-info">Çalışan Düzenle</button>
+</form>
+
