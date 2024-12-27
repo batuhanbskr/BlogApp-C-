@@ -13,9 +13,13 @@ namespace CoreDemo.ViewComponents.Writer
         Context c = new Context();
         public IViewComponentResult Invoke()
         {
-            var usermail = User.Identity.Name;
+            var username = User.Identity.Name;
+            ViewBag.veri = username;
             
-            var writerId = wm.GetWriterIdByMail(usermail);
+            var usermail = c.Users.Where(x => x.UserName == username).Select(y => y.Email).FirstOrDefault();
+
+            var writerId = c.Writers.Where(x => x.WriterMail == usermail).Select(y => y.WriterID).FirstOrDefault();
+
             var values = wm.GetWriterById(writerId);
             return View(values);
         }

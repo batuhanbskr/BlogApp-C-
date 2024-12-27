@@ -1,5 +1,6 @@
 ﻿using BusinessLayer.Concrete;
 using BusinessLayer.ValidationRules;
+using DataAccessLayer.Concrete;
 using DataAccessLayer.EntityFramework;
 using EntityLayer.Concrete;
 using FluentValidation.Results;
@@ -17,11 +18,14 @@ namespace CoreDemo.Controllers
         CategoryManager cm = new CategoryManager(new EfCategoryRepository());
         BlogManager bm = new BlogManager(new EfBlogRepository());
         WriterManager wm = new WriterManager(new EfWriterRepository());
+        Context c = new Context();
+        [AllowAnonymous]
         public IActionResult Index()
         {
             var values = bm.GetBlogListWithCategory();
             return View(values);
         }
+        [AllowAnonymous]
         public IActionResult BlogReadAll(int id)
         {
             ViewBag.i = id;
@@ -30,9 +34,9 @@ namespace CoreDemo.Controllers
         }
         public IActionResult BlogListByWriter()
         {
-            var usermail = User.Identity.Name;
-
-            var writerId = wm.GetWriterIdByMail(usermail);
+            var userName = User.Identity.Name;
+            var usermail = c.Users.Where(x => x.UserName == userName).Select(y => y.Email).FirstOrDefault();
+            var writerId = c.Writers.Where(x => x.WriterMail == usermail).Select(y => y.WriterID).FirstOrDefault();
 
             var values = bm.GetListWithCategoryByWriterBm(writerId);
             return View(values);
@@ -99,8 +103,9 @@ namespace CoreDemo.Controllers
         [HttpPost]
         public IActionResult EditBlog(Blog p)
         {
-            var usermail = User.Identity.Name;
-            var writerId = wm.GetWriterIdByMail(usermail);
+            var userName = User.Identity.Name;
+            var usermail = c.Users.Where(x => x.UserName == userName).Select(y => y.Email).FirstOrDefault();
+            var writerId = c.Writers.Where(x => x.WriterMail == usermail).Select(y => y.WriterID).FirstOrDefault();
             p.WriterID = writerId;
 
             //p.BlogCreateDate = 
